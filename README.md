@@ -1,8 +1,8 @@
 # EXPERIMENT-01-INTERFACTING-DIGITAL-OUTPUT-WITH-EDGE-DEVICE---(RASPBERRYPI-PI4)
-### NAME 
-### DEPARTMENT 
-### ROLL NO 
-### DATE OF EXPERIMENT 
+### NAME : KANNAN r
+### DEPARTMENT : AIML
+### REG NO : 212224240072
+### DATE OF EXPERIMENT : 04.02.2026
 
 ### AIM
 To interface a digital output device (LED) with the Raspberry Pi 4 and control it using Python.
@@ -51,34 +51,144 @@ Connect the IR sensor Vcc to any +5V.
 Connect the IR sensor GND to any GND.
 Connect the IR sensor OUT to any one GPIO. 
 
-## PROGRAM (Python)
+## Experiment 1A – LED Blinking using Raspberry Pi 4
+
+## PROGRAM(python):
 ```
+import RPi.GPIO as GPIO
+import time
+import urllib.request
+
+# ThingSpeak details
+WRITE_API_KEY = "VVWU73OPRWSIBGCH"
+CHANNEL_ID = 3249431
+THINGSPEAK_URL = "https://api.thingspeak.com/update"
+
+# Set GPIO numbering mode
+GPIO.setmode(GPIO.BCM)
+
+# Define LED pin
+LED_PIN = 18
+
+# Set GPIO18 as output
+GPIO.setup(LED_PIN, GPIO.OUT)
+
+def send_to_thingspeak(value):
+    url = f"https://api.thingspeak.com/update?api_key=VVWU73OPRWSIBGCH&field1={value}"
+    urllib.request.urlopen(url)
+    print("Sent to ThingSpeak:", value)
+
+try:
+    while True:
+        # LED ON
+        GPIO.output(LED_PIN, GPIO.HIGH)
+        print("LED ON")
+        send_to_thingspeak(1)
+        time.sleep(15)
+
+        # LED OFF
+        GPIO.output(LED_PIN, GPIO.LOW)
+        print("LED OFF")
+        send_to_thingspeak(0)
+        time.sleep(15)
+
+except KeyboardInterrupt:
+    print("Program stopped")
+
+finally:
+    GPIO.cleanup()
+```
+## OUTPUT 1A:
+## LED OFF:
+![WhatsApp Image 2026-02-04 at 11 23 14 AM](https://github.com/user-attachments/assets/39ed0413-0320-48b4-985b-ca1726bcdd36)
+
+![WhatsApp Image 2026-02-04 at 11 24 50 AM](https://github.com/user-attachments/assets/55259153-4def-43e9-97b4-23e6dd560203)
+
+<img width="1919" height="901" alt="Screenshot 2026-02-04 111336" src="https://github.com/user-attachments/assets/a87e6882-d87f-42dd-8052-da32d7e590f0" />
+
+# LED ON:
+
+![WhatsApp Image 2026-02-04 at 11 23 15 AM](https://github.com/user-attachments/assets/b54ae90b-d261-41f5-adff-c19d0119c4cf)
+
+![WhatsApp Image 2026-02-04 at 11 24 54 AM](https://github.com/user-attachments/assets/de70ddd6-2eed-45bb-abe7-7b4588910071)
+
+<img width="1911" height="901" alt="Screenshot 2026-02-04 111351" src="https://github.com/user-attachments/assets/cb92bc54-04d6-4db1-acb6-fc15a1e6d2c4" />
+
+## Experiment 1B – LED Control using IR Sensor
+
+## PROGRAM(python):
+
+```
+import RPi.GPIO as GPIO
+import time
+import urllib.request
+
+# ThingSpeak details
+WRITE_API_KEY = "VVWU73OPRWSIBGCH"
+CHANNEL_ID = 3249431
+THINGSPEAK_URL = "https://api.thingspeak.com/update"
 
 
- 
+
+# Pin setup
+SENSOR_PIN = 23   # Input from sensor
+LED_PIN = 18      # Output to LED
+
+# GPIO mode
+GPIO.setmode(GPIO.BCM)
+
+# Setup pins
+GPIO.setup(SENSOR_PIN, GPIO.IN)
+GPIO.setup(LED_PIN, GPIO.OUT)
+
+def send_to_thingspeak(value):
+    url = f"https://api.thingspeak.com/update?api_key=VVWU73OPRWSIBGCH&field2={value}"
+    urllib.request.urlopen(url)
+    print("Sent to ThingSpeak:", value)
 
 
+print("Sensor + LED system running...")
 
- 
-````
+try:
+    while True:
+        sensor_value = GPIO.input(SENSOR_PIN)
 
-### OUPUT  
-Experiment 1A
+        if sensor_value == 0:   # Many IR sensors give LOW when object detected
+            print("Object Detected! LED ON")
+            GPIO.output(LED_PIN, GPIO.HIGH)
+            send_to_thingspeak(1)
 
-# FIGURE -02 ADD TITILE HERE 
+            time.sleep(15)
+        else:
+            print("No Object. LED OFF")
+            GPIO.output(LED_PIN, GPIO.LOW)
+            send_to_thingspeak(0)
 
-#  FIGURE -03 ADD TITILE HERE 
+            time.sleep(15)
 
-# FIGURE -04 ADD TITLE HERE 
+        time.sleep(0.1)
 
-Experiment 1B
+except KeyboardInterrupt:
+    print("Stopped by user")
 
-# FIGURE -05 ADD TITILE HERE 
+finally:
+    GPIO.cleanup()
+```
+## OUTPUT 1B:
+# LED OFF(NO OBJECT DETECTED):
 
-#  FIGURE -06 ADD TITILE HERE 
+![WhatsApp Image 2026-02-04 at 11 56 09 AM](https://github.com/user-attachments/assets/3c727e0f-66b5-4dc0-99b0-7fa4f795ab66)
 
-# FIGURE -07 ADD TITLE HERE 
+ ![WhatsApp Image 2026-02-04 at 11 56 08 AM](https://github.com/user-attachments/assets/42fe85a3-b871-4291-a2b7-94d7f95469e7)
 
- 
+<img width="1916" height="912" alt="Screenshot 2026-02-04 115536" src="https://github.com/user-attachments/assets/ed1c21b8-4986-4ef0-8b1d-e9cdac60f444" />
+
+ # LED ON(OBJECT DETECTED):
+
+ ![WhatsApp Image 2026-02-04 at 11 56 09 AM (1)](https://github.com/user-attachments/assets/9b484547-9f88-4b49-b5db-582d4abc516e)
+ ![WhatsApp Image 2026-02-04 at 11 56 09 AM (2)](https://github.com/user-attachments/assets/669da119-13ec-49d9-bfcd-0e5ac3836c99)
+ <img width="1914" height="913" alt="Screenshot 2026-02-04 115522" src="https://github.com/user-attachments/assets/0bd19e1e-6a4e-4665-a221-9bd6f8b6e0ad" />
+
+
 ## RESULTS
 The LED connected to the Raspberry Pi 4 successfully turns ON and OFF at  user defined time  confirming the proper interfacing of a digital output.
